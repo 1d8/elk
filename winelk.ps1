@@ -21,8 +21,18 @@ $winlogbeatConfigPath = "$env:ProgramFiles\Winlogbeat\winlogbeat-7.14.1-windows-
 $winlogbeatConfig = Get-Content $winlogbeatConfigPath
 $winlogbeatConfig = $winlogbeatConfig.replace("#output.elasticsearch:", "output.elasticsearch:")
 #$winlogbeatConfig = $winlogbeatConfig -replace "#hosts: \[\"localhost:9200\"\]","hosts: [\"$($ELKIPAddress):9200\"]"
-$winlogbeatConfig = $winlogbeatConfig -replace 'hosts: \["localhost:9200"\]', ('hosts: ["{0}:9200"]' -f $ELKIPAddress)
+#$winlogbeatConfig = $winlogbeatConfig -replace 'hosts: \["localhost:9200"\]', ('hosts: ["{0}:9200"]' -f $ELKIPAddress)
 #$winlogbeatConfig = $winlogbeatConfig -replace 'hosts: \["localhost:9200"\]', "hosts: [""$ELKIPAddress:9200""]"
+
+
+# If you're not receiving any log data after running this script, it's likely the winlogbeat.yml file didn't update properly. Fix:
+	# $env:ProgramFiles\Winlogbeat\winlogbeat-7.14.1-windows-x86_64\winlogbeat.yml - open up in notepad
+	# CTRL + F to find output.elasticsearch
+	# Replace the localhost:9200 with the IP address of the ELK server:9200
+	# Restart winlogbeat service
+
+
+$winlogbeatConfig = $winlogbeatConfig -replace 'hosts: \["localhost:9200"\]', ('hosts: ["' + $ELKIPAddress + ':9200"]')
 Set-Content $winlogbeatConfigPath $winlogbeatConfig
 
 # Install Winlogbeat as a service
