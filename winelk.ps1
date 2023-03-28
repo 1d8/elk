@@ -4,8 +4,16 @@ param(
 )
 
 # Download the Winlogbeat installation package
-Invoke-WebRequest -Uri "https://artifacts.elastic.co/downloads/beats/winlogbeat/winlogbeat-7.14.1-windows-x86_64.zip" -OutFile "$env:TEMP\winlogbeat.zip"
+# Invoke-WebRequest -Uri "https://artifacts.elastic.co/downloads/beats/winlogbeat/winlogbeat-7.14.1-windows-x86_64.zip" -OutFile "$env:TEMP\winlogbeat.zip"
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+New-Item -ItemType Directory -Path "C:\Program Files\wingoEDR" -Force
 
+$url = "https://artifacts.elastic.co/downloads/beats/winlogbeat/winlogbeat-7.14.1-windows-x86_64.zip"
+
+$file = "$env:TEMP\winlogbeat.zip"
+
+$webclient = New-Object System.Net.WebClient
+$webclient.DownloadFile($url, $file)
 # Extract the Winlogbeat installation package
 Expand-Archive -Path "$env:TEMP\winlogbeat.zip" -DestinationPath "$env:ProgramFiles\Winlogbeat" -Force
 
